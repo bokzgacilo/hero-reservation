@@ -1,32 +1,58 @@
+import { Button, Modal, ModalCloseButton, ModalContent, ModalOverlay, ModalHeader, ModalBody, Flex } from "@chakra-ui/react";
 import moment from "moment"
+import { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar"
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 
+
 export default function BigCalendar(props){
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClose = () => {
+    setSelectedDate(null);
+    setIsOpen(false);
+  };
+
   const localizer = momentLocalizer(moment)
 
-  const events = [
-    {
-      title: 'Event 1',
-      start: new Date(2024, 1, 27, 10, 0), // Year, Month (0-11), Day, Hour, Minute
-      end: new Date(2024, 1, 27, 12, 0),
-    },
-    {
-      title: 'Event 2',
-      start: new Date(2024, 1, 28, 13, 0),
-      end: new Date(2024, 1, 28, 15, 0),
-    }
-  ]
+  const handleSelectEvent = (event) => {
+    alert(`Clicked event: ${event.title}`);
+  };
+
+  const handleSlotSelect = ({ start }) => {
+    setSelectedDate(start);
+    setIsOpen(true);
+  }
 
   return(
-    <div style={{ height: '80vh' }}>
+    <>
       <Calendar 
         localizer={localizer}
-        events={events}
+        events={props.events}
+        views={['month']}
         startAccessor="start"
         endAccessor="end"
+        onSelectEvent={handleSelectEvent}
+        selectable={true}
+        onSelectSlot={handleSlotSelect}
       />
-    </div>
+
+      <Modal isOpen={isOpen} onClose={handleClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{moment(selectedDate).format('MMMM DD, YYYY')}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={4}>
+            <Flex direction='row' gap={4}>
+              <Button disabled colorScheme='blue'>Book Now!</Button>
+              <Button onClick={handleClose}>Close</Button>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+    
   )
 }

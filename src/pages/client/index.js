@@ -1,7 +1,39 @@
+import { useState } from "react";
 import Head from "next/head"
 import BigCalendar from "../components/BigCalendar"
+import { Box, Stack, Text, Flex, Select, Input, Container, Button, VStack, HStack} from "@chakra-ui/react"
 
 export default function index() {
+  const [selectedOption, setSelectedOption] = useState("");
+  const [events, setEvents] = useState([{
+    title: 'Booked',
+    start: new Date(2024, 1, 27), // Year, Month (0-11), Day, Hour, Minute
+    end: new Date(2024, 1, 28,),
+  },
+  {
+    title: 'Booked',
+    start: new Date(2024, 1, 28, 13, 0),
+    end: new Date(2024, 1, 28, 15, 0),
+  }]);
+
+  const handleRoomSelect = (event) => {
+    setSelectedOption(event.target.value);
+
+    console.log(event.target.value)
+
+    if(event.target.value === ""){
+      setEvents([])
+    }else {
+      setEvents([
+        {
+          title: `Event ${selectedOption}`,
+          start: new Date(2024, 1, 23), // Year, Month (0-11), Day, Hour, Minute
+          end: new Date(2024, 1, 27),
+        }
+      ])
+    }
+  }
+
   return (
     <>
       <Head>
@@ -10,9 +42,21 @@ export default function index() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <BigCalendar />
-      </main>
+      <Container maxW='800px'>
+        <Stack direction='column' flex='1'>
+          <Text>Select Room: </Text>
+          <Box>
+            <Select value={selectedOption} onChange={handleRoomSelect} placeholder="Select Room">
+              <option value='room-101'>Room 101</option>
+              <option value='room-102'>Room 102</option>
+            </Select>
+          </Box>
+          <Text>Available Dates: </Text>
+          <Box height='400px'>
+            <BigCalendar events={events} />
+          </Box>
+        </Stack>
+      </Container>
     </>
   )
 }
