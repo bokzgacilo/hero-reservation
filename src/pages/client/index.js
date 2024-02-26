@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head"
-import BigCalendar from "../components/BigCalendar"
-import { Box, Stack, Text, Select, Container} from "@chakra-ui/react"
+import { Box, Stack, Text, Select, Container, Button, Modal, ModalCloseButton, ModalContent, ModalOverlay, ModalHeader, ModalBody, Flex } from "@chakra-ui/react";
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from "@fullcalendar/interaction"
 
 export default function Client() {
   const [selectedOption, setSelectedOption] = useState("");
+  const [selectedDate, setSelectedDate] = useState("")
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    
+  }, []);
+
+  const handleClose = () => {
+    setSelectedDate(null);
+    setIsOpen(false);
+    console.log("modal close")
+  };
+
+  const handleDayClick = (arg) => {
+    console.log("Day clicked:", arg.dateStr);
+    setIsOpen(true);
+  };
 
   const [events, setEvents] = useState([{
     title: 'Booked',
@@ -17,6 +36,7 @@ export default function Client() {
     end: new Date(2024, 1, 28, 15, 0),
   }]);
 
+  
   const handleRoomSelect = (event) => {
     setSelectedOption(event.target.value);
 
@@ -43,7 +63,20 @@ export default function Client() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container maxW='800px'>
+      <Container maxW='700px'>
+        <Modal isOpen={isOpen} onClose={handleClose} size='sm'>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Testing</ModalHeader>
+            <ModalBody p={4}>
+              <Flex direction='row' gap={4}>
+                <Button disabled colorScheme='blue'>Book Now!</Button>
+                <Button onClick={handleClose}>Close</Button>
+              </Flex>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+
         <Stack direction='column' flex='1'>
           <Text>Select Room: </Text>
           <Box>
@@ -53,8 +86,25 @@ export default function Client() {
             </Select>
           </Box>
           <Text>Available Dates: </Text>
-          <Box height='400px'>
-            <BigCalendar events={events} />
+          <Box>
+            <FullCalendar
+              height='500px'
+              plugins={[ dayGridPlugin, interactionPlugin  ]}
+              initialView="dayGridMonth"
+              events={events}
+              selectable={true}
+              dateClick={handleDayClick}
+            />
+            {/* <Calendar 
+              localizer={localizer}
+              events={events}
+              views={['month']}
+              startAccessor="start"
+              endAccessor="end"
+              selectable={true}
+              // onSelectSlot={handleSlotSelect}
+              dayPropGetter={dayPropGetter}
+            /> */}
           </Box>
         </Stack>
       </Container>
