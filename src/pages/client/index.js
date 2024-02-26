@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Head from "next/head"
 import BigCalendar from "../components/BigCalendar"
-import { Box, Stack, Text, Flex, Select, Input, Container, Button, VStack, HStack} from "@chakra-ui/react"
+import { Box, Stack, Text, Select, Container} from "@chakra-ui/react"
 
-export default function index() {
+export default function Client() {
   const [selectedOption, setSelectedOption] = useState("");
+
   const [events, setEvents] = useState([{
     title: 'Booked',
     start: new Date(2024, 1, 27), // Year, Month (0-11), Day, Hour, Minute
